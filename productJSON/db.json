@@ -1,0 +1,136 @@
+{
+  "users": [
+    {
+      "id": "2e0ca9d5-f962-4f40-a2d8-d3d9dd8fcd53",
+      "name": "Shubham Soni",
+      "username": "shubham950202",
+      "email": "shubham@gmail.com",
+      "mobile": "9876543234",
+      "password": "123456",
+      "profileImage": "file:///Users/shubhamsoni/Library/Developer/CoreSimulator/Devices/F81AF71C-7541-4E1A-8578-953D20ECBD4D/data/Containers/Data/Application/4305C0EA-70BF-48C4-B3F8-863189433A63/tmp/6B3765FD-098B-461B-BE0A-F480A8411FD4.jpg",
+      "createdAt": "2026-06-28T09:30:00.000Z"
+    },
+    {
+      "id": "3be81672-7c7e-4125-9786-e687e0c6f083",
+      "name": "Rakesh",
+      "username": "rakesh",
+      "email": "rakesh@test.com",
+      "mobile": "7876567876",
+      "password": "Shubham#12345",
+      "profileImage": "",
+      "createdAt": "2026-06-28T10:18:18.516Z"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "iPhone 16 Pro",
+      "price": 129999,
+      "category": "Mobiles",
+      "brand": "Apple",
+      "rating": 4.9,
+      "stock": 15,
+      "image": "https://picsum.photos/400/400?random=1"
+    },
+    {
+      "id": 2,
+      "name": "Samsung Galaxy S25 Ultra",
+      "price": 119999,
+      "category": "Mobiles",
+      "brand": "Samsung",
+      "rating": 4.8,
+      "stock": 20,
+      "image": "https://picsum.photos/400/400?random=2"
+    },
+    {
+      "id": 3,
+      "name": "MacBook Air M4",
+      "price": 149900,
+      "category": "Laptops",
+      "brand": "Apple",
+      "rating": 4.9,
+      "stock": 8,
+      "image": "https://picsum.photos/400/400?random=3"
+    },
+    {
+      "id": 4,
+      "name": "Dell XPS 13",
+      "price": 134999,
+      "category": "Laptops",
+      "brand": "Dell",
+      "rating": 4.7,
+      "stock": 12,
+      "image": "https://picsum.photos/400/400?random=4"
+    },
+    {
+      "id": 5,
+      "name": "Sony WH-1000XM5",
+      "price": 29999,
+      "category": "Headphones",
+      "brand": "Sony",
+      "rating": 4.8,
+      "stock": 25,
+      "image": "https://picsum.photos/400/400?random=5"
+    },
+    {
+      "id": 6,
+      "name": "Apple Watch Series 10",
+      "price": 49999,
+      "category": "Smartwatch",
+      "brand": "Apple",
+      "rating": 4.9,
+      "stock": 18,
+      "image": "https://picsum.photos/400/400?random=6"
+    },
+    {
+      "id": 7,
+      "name": "iPad Air M3",
+      "price": 69999,
+      "category": "Tablets",
+      "brand": "Apple",
+      "rating": 4.8,
+      "stock": 14,
+      "image": "https://picsum.photos/400/400?random=7"
+    },
+    {
+      "id": 8,
+      "name": "Canon EOS R50",
+      "price": 78999,
+      "category": "Cameras",
+      "brand": "Canon",
+      "rating": 4.7,
+      "stock": 10,
+      "image": "https://picsum.photos/400/400?random=8"
+    },
+    {
+      "id": 9,
+      "name": "JBL Flip 7",
+      "price": 9999,
+      "category": "Speakers",
+      "brand": "JBL",
+      "rating": 4.6,
+      "stock": 35,
+      "image": "https://picsum.photos/400/400?random=9"
+    },
+    {
+      "id": 10,
+      "name": "Nike Air Max 270",
+      "price": 12999,
+      "category": "Shoes",
+      "brand": "Nike",
+      "rating": 4.5,
+      "stock": 40,
+      "image": "https://picsum.photos/400/400?random=10"
+    },
+    {
+      "name": "AI",
+      "price": 200,
+      "category": "Book",
+      "brand": "Ai",
+      "rating": 2,
+      "stock": 50,
+      "image": "https://img.magnific.com/free-photo/close-up-ai-robot-working_23-2151015326.jpg?t=st=1782638425~exp=1782642025~hmac=277243a00a975fffe721fdebac3d5eea10eb3e1dff2325eae4eed5f394f02a16&w=2000",
+      "id": 11
+    }
+  ]
+}
