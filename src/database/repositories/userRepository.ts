@@ -1,10 +1,9 @@
-import {getData, saveData} from '../services/storageService';
-
-const USERS_KEY = 'USERS';
+const BASE_URL = 'http://localhost:3001/users';
 
 export interface User {
   id: string;
-  fullName: string;
+  name: string;
+  username: string;
   email: string;
   mobile: string;
   password: string;
@@ -12,137 +11,77 @@ export interface User {
   createdAt: string;
 }
 
-/**
- * Get All Users
- */
 export const getAllUsers = async (): Promise<User[]> => {
-  try {
-    const users = await getData(USERS_KEY);
-
-    console.log('ALL USERS =>', users);
-
-    return users || [];
-  } catch (error) {
-    console.log('GET USERS ERROR =>', error);
-    return [];
-  }
+  const res = await fetch(BASE_URL);
+  return await res.json();
 };
 
-/**
- * Get User By ID
- */
 export const getUserById = async (
   id: string,
 ): Promise<User | null> => {
-  const users = await getAllUsers();
+  const res = await fetch(`${BASE_URL}/${id}`);
 
-  return (
-    users.find(user => user.id === id) ||
-    null
-  );
-};
-
-/**
- * Get User By Email
- */
-export const getUserByEmail = async (
-  email: string,
-): Promise<User | null> => {
-  const users = await getAllUsers();
-
-  return (
-    users.find(
-      user =>
-        user.email.toLowerCase() ===
-        email.toLowerCase(),
-    ) || null
-  );
-};
-
-/**
- * Add User
- */
-export const addUser = async (
-  user: User,
-): Promise<User> => {
-  const users = await getAllUsers();
-
-  users.push(user);
-
-  await saveData(
-    USERS_KEY,
-    users,
-  );
-
-  console.log(
-    'USER ADDED =>',
-    user,
-  );
-
-  return user;
-};
-
-/**
- * Update User
- */
-export const updateUser = async (
-  id: string,
-  updatedData: Partial<User>,
-): Promise<User | null> => {
-  const users = await getAllUsers();
-
-  const index = users.findIndex(
-    user => user.id === id,
-  );
-
-  if (index === -1) {
-    console.log(
-      'USER NOT FOUND =>',
-      id,
-    );
-
+  if (!res.ok) {
     return null;
   }
 
-  users[index] = {
-    ...users[index],
-    ...updatedData,
-  };
-
-  console.log(
-    'UPDATED USER =>',
-    users[index],
-  );
-
-  await saveData(
-    USERS_KEY,
-    users,
-  );
-
-  return users[index];
+  return await res.json();
 };
 
-/**
- * Delete User
- */
+export const getUserByEmail = async (
+  email: string,
+): Promise<User | null> => {
+  const res = await fetch(
+    `${BASE_URL}?email=${email}`,
+  );
+
+  const users = await res.json();
+
+  return users.length
+    ? users[0]
+    : null;
+};
+
+export const addUser = async (
+  user: User,
+): Promise<User> => {
+  const res = await fetch(BASE_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type':
+        'application/json',
+    },
+    body: JSON.stringify(user),
+  });
+
+  return await res.json();
+};
+
+export const updateUser = async (
+  id: string,
+  updatedData: Partial<User>,
+): Promise<User> => {
+  const res = await fetch(
+    `${BASE_URL}/${id}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type':
+          'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    },
+  );
+
+  return await res.json();
+};
+
 export const deleteUser = async (
   id: string,
 ): Promise<boolean> => {
-  const users = await getAllUsers();
-
-  const filteredUsers = users.filter(
-    user => user.id !== id,
-  );
-
-  await saveData(
-    USERS_KEY,
-    filteredUsers,
-  );
-
-  console.log(
-    'USER DELETED =>',
-    id,
-  );
+  await fetch(`${BASE_URL}/${id}`, {
+    method: 'DELETE',
+  });
 
   return true;
 };

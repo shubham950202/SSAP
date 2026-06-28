@@ -5,11 +5,16 @@ import {
   Text,
   StyleSheet,
   Image,
+  TouchableOpacity,
 } from 'react-native';
+
+import {useNavigation} from '@react-navigation/native';
 
 import useProducts from '../hooks/useProducts';
 
 export default function ProductList() {
+  const navigation: any = useNavigation();
+
   const {products, loading} = useProducts();
 
   if (loading) {
@@ -21,67 +26,93 @@ export default function ProductList() {
   }
 
   return (
-    <FlatList
-      data={products}
-      keyExtractor={item => item.id.toString()}
-      contentContainerStyle={styles.list}
-      renderItem={({item}) => (
-        <View style={styles.card}>
-          <Image
-            source={{uri: item.image}}
-            style={styles.image}
-            resizeMode="cover"
-          />
+    <View style={styles.container}>
+      <FlatList
+        data={products}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() =>
+              navigation.navigate('ProductDetail', {
+                product: item,
+              })
+            }>
+            <View style={styles.card}>
+              <Image
+                source={{uri: item.image}}
+                style={styles.image}
+                resizeMode="cover"
+              />
 
-          <View style={styles.content}>
-            <Text
-              numberOfLines={2}
-              style={styles.name}>
-              {item.name}
-            </Text>
+              <View style={styles.content}>
+                <Text
+                  numberOfLines={2}
+                  style={styles.name}>
+                  {item.name}
+                </Text>
 
-            <Text style={styles.price}>
-              ₹ {item.price.toLocaleString()}
-            </Text>
+                <Text style={styles.price}>
+                  ₹ {Number(item.price).toLocaleString()}
+                </Text>
 
-            <View style={styles.row}>
-              <Text style={styles.category}>
-                {item.category}
-              </Text>
+                <View style={styles.row}>
+                  <Text style={styles.category}>
+                    {item.category}
+                  </Text>
 
-              <Text style={styles.brand}>
-                {item.brand}
-              </Text>
+                  <Text style={styles.brand}>
+                    {item.brand}
+                  </Text>
+                </View>
+
+                <View style={styles.bottomRow}>
+                  <Text style={styles.rating}>
+                    ⭐ {item.rating}
+                  </Text>
+
+                  <Text
+                    style={[
+                      styles.stock,
+                      {
+                        color:
+                          item.stock > 0
+                            ? '#16A34A'
+                            : '#DC2626',
+                      },
+                    ]}>
+                    {item.stock > 0
+                      ? `${item.stock} In Stock`
+                      : 'Out of Stock'}
+                  </Text>
+                </View>
+              </View>
             </View>
+          </TouchableOpacity>
+        )}
+      />
 
-            <View style={styles.bottomRow}>
-              <Text style={styles.rating}>
-                ⭐ {item.rating}
-              </Text>
+      {/* Floating Add Button */}
 
-              <Text
-                style={[
-                  styles.stock,
-                  {
-                    color:
-                      item.stock > 0
-                        ? '#16A34A'
-                        : '#DC2626',
-                  },
-                ]}>
-                {item.stock > 0
-                  ? `${item.stock} In Stock`
-                  : 'Out of Stock'}
-              </Text>
-            </View>
-          </View>
-        </View>
-      )}
-    />
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() =>
+          navigation.navigate('AddProduct')
+        }>
+        <Text style={styles.plus}>＋</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+  },
+
   loader: {
     flex: 1,
     justifyContent: 'center',
@@ -90,6 +121,7 @@ const styles = StyleSheet.create({
 
   list: {
     padding: 15,
+    paddingBottom: 90,
   },
 
   card: {
@@ -162,6 +194,25 @@ const styles = StyleSheet.create({
   },
 
   stock: {
+    fontWeight: '700',
+  },
+
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#2563EB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+  },
+
+  plus: {
+    color: '#fff',
+    fontSize: 34,
     fontWeight: '700',
   },
 });

@@ -8,6 +8,7 @@ import HomeScreen from '../features/home/screens/HomeScreen';
 import UsersScreen from '../features/users/screens/UsersScreen';
 import ProfileScreen from '../features/profile/screens/ProfileScreen';
 import ProductList from '../features/products/screens/ProductList';
+import AddProduct from '../features/products/screens/AddProduct';
 
 const Tab =
   createBottomTabNavigator();
@@ -54,6 +55,7 @@ export default function AppNavigator({
             onLogout={onLogout}
           />
         )}
+        
       </Tab.Screen>
     </Tab.Navigator>
   );

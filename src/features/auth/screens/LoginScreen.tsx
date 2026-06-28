@@ -11,15 +11,12 @@ import {
   Controller,
 } from 'react-hook-form';
 
-import {
-  yupResolver,
-} from '@hookform/resolvers/yup';
+import {yupResolver} from '@hookform/resolvers/yup';
 
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
 
 import {loginSchema} from '../validations/loginValidation';
-
 import {loginUser} from '../../../services/auth/loginService';
 
 export default function LoginScreen({
@@ -28,28 +25,44 @@ export default function LoginScreen({
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: {errors, isSubmitting},
   } = useForm({
     resolver: yupResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
   const onSubmit = async (data: any) => {
     try {
       const user = await loginUser(
-        data.email,
+        data.email.trim().toLowerCase(),
         data.password,
+      );
+
+      console.log(
+        'LOGIN SUCCESS =>',
+        user,
       );
 
       Alert.alert(
         'Success',
-        `Welcome ${user.fullName}`,
+        `Welcome ${user.name}`,
       );
 
+      // RootNavigator ko notify karega
       onLogin?.();
     } catch (error: any) {
+      console.log(
+        'LOGIN ERROR =>',
+        error,
+      );
+
       Alert.alert(
         'Login Failed',
-        error.message,
+        error?.message ||
+          'Invalid email or password',
       );
     }
   };
@@ -63,13 +76,14 @@ export default function LoginScreen({
       <Controller
         control={control}
         name="email"
-        defaultValue=""
-        render={({field: {onChange, value}}) => (
+        render={({field}) => (
           <Input
             placeholder="Email"
-            value={value}
-            onChangeText={onChange}
+            autoCapitalize="none"
+            autoCorrect={false}
             keyboardType="email-address"
+            value={field.value}
+            onChangeText={field.onChange}
             error={errors.email?.message}
           />
         )}
@@ -78,20 +92,23 @@ export default function LoginScreen({
       <Controller
         control={control}
         name="password"
-        defaultValue=""
-        render={({field: {onChange, value}}) => (
+        render={({field}) => (
           <Input
             placeholder="Password"
             secureTextEntry
-            value={value}
-            onChangeText={onChange}
+            value={field.value}
+            onChangeText={field.onChange}
             error={errors.password?.message}
           />
         )}
       />
 
       <Button
-        title="Login"
+        title={
+          isSubmitting
+            ? 'Logging in...'
+            : 'Login'
+        }
         onPress={handleSubmit(onSubmit)}
       />
     </View>
@@ -101,15 +118,15 @@ export default function LoginScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
     justifyContent: 'center',
+    padding: 24,
     backgroundColor: '#F8FAFC',
   },
 
   heading: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: '700',
-    marginBottom: 30,
     color: '#0F172A',
+    marginBottom: 30,
   },
 });

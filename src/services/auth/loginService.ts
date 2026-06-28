@@ -1,24 +1,34 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {getUserByEmail} from '../../database/repositories/userRepository';
+import {
+  getUserByEmail,
+} from '../api/userApi';
 
-export const loginUser = async (
-  email: string,
-  password: string,
-) => {
-  const user = await getUserByEmail(email);
+import {
+  saveSession,
+} from './sessionService';
 
-  if (!user) {
-    throw new Error('User not found');
-  }
+export const loginUser =
+  async (
+    email: string,
+    password: string,
+  ) => {
+    const user =
+      await getUserByEmail(email);
 
-  if (user.password !== password) {
-    throw new Error('Invalid password');
-  }
+    if (!user) {
+      throw new Error(
+        'User not found',
+      );
+    }
 
-  await AsyncStorage.setItem(
-    'CURRENT_USER',
-    JSON.stringify(user),
-  );
+    if (
+      user.password !== password
+    ) {
+      throw new Error(
+        'Invalid password',
+      );
+    }
 
-  return user;
-};
+    await saveSession(user);
+
+    return user;
+  };

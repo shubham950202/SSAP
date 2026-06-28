@@ -1,6 +1,7 @@
 import React, {
   useEffect,
   useState,
+  useCallback,
 } from 'react';
 
 import {
@@ -9,6 +10,7 @@ import {
   Text,
   StyleSheet,
   Alert,
+  Image,
 } from 'react-native';
 
 import Button from '../../../components/Button';
@@ -28,17 +30,27 @@ export default function ProfileScreen({
     loadProfile();
   }, []);
 
-  const loadProfile = async () => {
-    const data =
-      await getSession();
+  const loadProfile = useCallback(
+    async () => {
+      try {
+        const data =
+          await getSession();
 
-    setUser(data);
-  };
+        setUser(data);
+      } catch (error) {
+        console.log(
+          'PROFILE ERROR',
+          error,
+        );
+      }
+    },
+    [],
+  );
 
-  const logout = async () => {
+  const logout = () => {
     Alert.alert(
       'Logout',
-      'Are you sure?',
+      'Are you sure you want to logout?',
       [
         {
           text: 'Cancel',
@@ -50,6 +62,8 @@ export default function ProfileScreen({
           onPress: async () => {
             await clearSession();
 
+            setUser(null);
+
             onLogout?.();
           },
         },
@@ -58,10 +72,33 @@ export default function ProfileScreen({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}>
       <View style={styles.card}>
+        {user?.profileImage ? (
+          <Image
+            source={{
+              uri: user.profileImage,
+            }}
+            style={styles.avatar}
+          />
+        ) : (
+          <View style={styles.avatar}>
+            <Text
+              style={
+                styles.avatarText
+              }>
+              {user?.name
+                ?.charAt(0)
+                ?.toUpperCase() ||
+                'U'}
+            </Text>
+          </View>
+        )}
+
         <Text style={styles.name}>
-          {user?.fullName}
+          {user?.name ||
+            'Guest User'}
         </Text>
 
         <Text style={styles.email}>
@@ -70,6 +107,21 @@ export default function ProfileScreen({
 
         <Text style={styles.mobile}>
           {user?.mobile}
+        </Text>
+
+        <Text
+          style={styles.username}>
+          @{user?.username}
+        </Text>
+
+        <Text
+          style={styles.date}>
+          Joined :
+          {user?.createdAt
+            ? ` ${new Date(
+                user.createdAt,
+              ).toLocaleDateString()}`
+            : ''}
         </Text>
       </View>
 
@@ -81,34 +133,71 @@ export default function ProfileScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-    padding: 20,
-  },
+const styles =
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor:
+        '#F8FAFC',
+      padding: 20,
+      justifyContent:
+        'space-between',
+    },
 
-  card: {
-    backgroundColor: '#FFF',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 3,
-  },
+    card: {
+      backgroundColor: '#FFF',
+      borderRadius: 20,
+      padding: 24,
+      alignItems: 'center',
+      elevation: 3,
+    },
 
-  name: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#0F172A',
-  },
+    avatar: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      backgroundColor:
+        '#2563EB',
+      justifyContent:
+        'center',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
 
-  email: {
-    marginTop: 8,
-    color: '#64748B',
-  },
+    avatarText: {
+      fontSize: 36,
+      color: '#FFF',
+      fontWeight: '700',
+    },
 
-  mobile: {
-    marginTop: 4,
-    color: '#64748B',
-  },
-});
+    name: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#0F172A',
+    },
+
+    email: {
+      marginTop: 8,
+      color: '#64748B',
+      fontSize: 16,
+    },
+
+    mobile: {
+      marginTop: 6,
+      color: '#64748B',
+      fontSize: 16,
+    },
+
+    username: {
+      marginTop: 6,
+      color: '#2563EB',
+      fontSize: 15,
+      fontWeight: '600',
+    },
+
+    date: {
+      marginTop: 10,
+      color: '#94A3B8',
+      fontSize: 13,
+    },
+  });

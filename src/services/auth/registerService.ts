@@ -1,31 +1,44 @@
+import uuid from 'react-native-uuid';
+
 import {
-  addUser,
   getUserByEmail,
-} from '../../database/repositories/userRepository';
+  createUser,
+} from '../api/userApi';
 
 export const registerUser = async (
   data: any,
 ) => {
-  const existingUser =
-    await getUserByEmail(data.email);
+  const exist = await getUserByEmail(
+    data.email,
+  );
 
-  if (existingUser) {
+  if (exist) {
     throw new Error(
-      'Email already registered',
+      'Email already exists',
     );
   }
 
   const user = {
-    id: `USR${Date.now()}`,
-    fullName: data.fullName,
+    id: uuid.v4().toString(),
+
+    name: data.fullName,
+
+    username:
+      data.email
+        .split('@')[0]
+        .toLowerCase(),
+
     email: data.email,
+
     mobile: data.mobile,
+
     password: data.password,
+
     profileImage: '',
-    createdAt: new Date().toISOString(),
+
+    createdAt:
+      new Date().toISOString(),
   };
 
-  await addUser(user);
-
-  return user;
+  return await createUser(user);
 };

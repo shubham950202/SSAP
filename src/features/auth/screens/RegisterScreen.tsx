@@ -6,52 +6,92 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import {registerUser} from '../../../services/auth/registerService';
-import {useForm, Controller} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
+
+import {
+  useForm,
+  Controller,
+} from 'react-hook-form';
+
+import {
+  yupResolver,
+} from '@hookform/resolvers/yup';
 
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
 
 import {registerSchema} from '../validations/registerValidation';
+import {registerUser} from '../../../services/auth/registerService';
 
-export default function RegisterScreen({navigation}: any) {
+export default function RegisterScreen({
+  navigation,
+}: any) {
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    reset,
+    formState: {errors, isSubmitting},
   } = useForm({
     resolver: yupResolver(registerSchema),
+    defaultValues: {
+      fullName: '',
+      email: '',
+      mobile: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
- 
-    const onSubmit = async (data: any) => {
-      try {
-        const user =
-          await registerUser(data);
+  const onSubmit = async (data: any) => {
+    try {
+      const payload = {
+        fullName: data.fullName.trim(),
+        email: data.email.trim().toLowerCase(),
+        mobile: data.mobile.trim(),
+        password: data.password,
+      };
 
-        console.log(
-          'User Saved =>',
-          user,
-        );
+      const user = await registerUser(payload);
 
-        Alert.alert(
-          'Success',
-          'Registration Successful',
-        );
+      console.log(
+        'REGISTER SUCCESS =>',
+        user,
+      );
 
-        navigation.navigate('Login');
-      } catch (error: any) {
-        Alert.alert(
-          'Error',
-          error.message,
-        );
-      }
-    };
+      reset();
+
+      Alert.alert(
+        'Success',
+        'Registration Successful',
+        [
+          {
+            text: 'OK',
+            onPress: () =>
+              navigation.navigate(
+                'Login',
+              ),
+          },
+        ],
+      );
+    } catch (error: any) {
+      console.log(
+        'REGISTER ERROR =>',
+        error,
+      );
+
+      Alert.alert(
+        'Registration Failed',
+        error?.message ||
+          'Something went wrong',
+      );
+    }
+  };
 
   return (
     <ScrollView
-      contentContainerStyle={styles.container}>
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={
+        styles.container
+      }>
       <Text style={styles.heading}>
         Create Account
       </Text>
@@ -59,12 +99,16 @@ export default function RegisterScreen({navigation}: any) {
       <Controller
         control={control}
         name="fullName"
-        render={({field: {onChange, value}}) => (
+        render={({field}) => (
           <Input
             placeholder="Full Name"
-            value={value}
-            onChangeText={onChange}
-            error={errors.fullName?.message}
+            value={field.value}
+            onChangeText={
+              field.onChange
+            }
+            error={
+              errors.fullName?.message
+            }
           />
         )}
       />
@@ -72,13 +116,18 @@ export default function RegisterScreen({navigation}: any) {
       <Controller
         control={control}
         name="email"
-        render={({field: {onChange, value}}) => (
+        render={({field}) => (
           <Input
             placeholder="Email"
             keyboardType="email-address"
-            value={value}
-            onChangeText={onChange}
-            error={errors.email?.message}
+            autoCapitalize="none"
+            value={field.value}
+            onChangeText={
+              field.onChange
+            }
+            error={
+              errors.email?.message
+            }
           />
         )}
       />
@@ -86,13 +135,18 @@ export default function RegisterScreen({navigation}: any) {
       <Controller
         control={control}
         name="mobile"
-        render={({field: {onChange, value}}) => (
+        render={({field}) => (
           <Input
-            placeholder="Mobile"
+            placeholder="Mobile Number"
             keyboardType="phone-pad"
-            value={value}
-            onChangeText={onChange}
-            error={errors.mobile?.message}
+            maxLength={10}
+            value={field.value}
+            onChangeText={
+              field.onChange
+            }
+            error={
+              errors.mobile?.message
+            }
           />
         )}
       />
@@ -100,13 +154,17 @@ export default function RegisterScreen({navigation}: any) {
       <Controller
         control={control}
         name="password"
-        render={({field: {onChange, value}}) => (
+        render={({field}) => (
           <Input
             placeholder="Password"
             secureTextEntry
-            value={value}
-            onChangeText={onChange}
-            error={errors.password?.message}
+            value={field.value}
+            onChangeText={
+              field.onChange
+            }
+            error={
+              errors.password?.message
+            }
           />
         )}
       />
@@ -114,34 +172,52 @@ export default function RegisterScreen({navigation}: any) {
       <Controller
         control={control}
         name="confirmPassword"
-        render={({field: {onChange, value}}) => (
+        render={({field}) => (
           <Input
             placeholder="Confirm Password"
             secureTextEntry
-            value={value}
-            onChangeText={onChange}
-            error={errors.confirmPassword?.message}
+            value={field.value}
+            onChangeText={
+              field.onChange
+            }
+            error={
+              errors
+                .confirmPassword
+                ?.message
+            }
           />
         )}
       />
 
       <Button
-        title="Register"
-        onPress={handleSubmit(onSubmit)}
+        title={
+          isSubmitting
+            ? 'Registering...'
+            : 'Register'
+        }
+        onPress={handleSubmit(
+          onSubmit,
+        )}
       />
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-  },
+const styles =
+  StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      padding: 24,
+      backgroundColor:
+        '#F8FAFC',
+      justifyContent:
+        'center',
+    },
 
-  heading: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginTop: 50,
-    marginBottom: 25,
-  },
-});
+    heading: {
+      fontSize: 28,
+      fontWeight: '700',
+      marginBottom: 30,
+      color: '#0F172A',
+    },
+  });
