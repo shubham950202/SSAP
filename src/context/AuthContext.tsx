@@ -1,0 +1,4 @@
+login()
+logout()
+currentUser
+isAuthenticated
